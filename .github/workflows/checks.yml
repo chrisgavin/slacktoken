@@ -1,0 +1,40 @@
+name: "Checks"
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  checks:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Read Python Version"
+        id: read-python-version
+        uses: pCYSl5EDgo/cat@264f5b318158276af69bd0a2a9f1e613b2d03ebf
+        with:
+          path: ./.python-version
+          trim: true
+      - name: "Setup Python"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ steps.read-python-version.outputs.text }}"
+      - name: "Cache Base Dependencies"
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip/
+          key: pip-${{ runner.os }}-${{ hashFiles('./.python-version', './base-requirements.txt') }}
+      - name: "Install Base Dependencies"
+        run: python3 -m pip install --requirement ./base-requirements.txt
+      - name: "Cache Package Dependencies"
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs/
+          key: poetry-${{ runner.os }}-${{ hashFiles('./.python-version', './poetry.lock') }}
+      - name: "Run"
+        run: invoke ci
