@@ -1,18 +1,23 @@
 import json
+import os
 import pathlib
 import re
 import sqlite3
 import typing
 
 import requests
-import xdg
 
 import slacktoken.exceptions
 
 _API_TOKEN_MATCHER = re.compile("\"api_token\":\"([^\"]+)\"")
+_XDG_CONFIG_DIR_VARIABLE = "XDG_CONFIG_DIR"
 
 def _get_slack_configuration_directory() -> pathlib.Path:
-	return xdg.xdg_config_home() / "Slack"
+	if _XDG_CONFIG_DIR_VARIABLE in os.environ:
+		config_directory = pathlib.Path(_XDG_CONFIG_DIR_VARIABLE)
+	else:
+		config_directory = pathlib.Path.home() / ".config"
+	return config_directory / "Slack"
 
 def _get_slack_cookies() -> typing.Dict[str, str]:
 	cookie_database_path = _get_slack_configuration_directory() / "Cookies"
