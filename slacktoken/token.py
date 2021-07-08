@@ -12,6 +12,11 @@ import slacktoken.exceptions
 _API_TOKEN_MATCHER = re.compile("\"api_token\":\"([^\"]+)\"")
 _XDG_CONFIG_DIR_VARIABLE = "XDG_CONFIG_DIR"
 
+class SlackAuthenticationInformation():
+	def __init__(self, token:str, cookies:typing.Dict[str, str]):
+		self.token = token
+		self.cookies = cookies
+
 def _get_slack_configuration_directory() -> pathlib.Path:
 	if _XDG_CONFIG_DIR_VARIABLE in os.environ:
 		config_directory = pathlib.Path(_XDG_CONFIG_DIR_VARIABLE)
@@ -39,7 +44,7 @@ def _get_slack_workspaces() -> typing.List[str]:
 		workspaces = json.load(workspaces_file)
 	return [workspace["domain"] for workspace in workspaces.values()]
 
-def get(workspace:typing.Optional[str]) -> str:
+def get(workspace:typing.Optional[str]) -> SlackAuthenticationInformation:
 	cookies = _get_slack_cookies()
 	workspaces = _get_slack_workspaces()
 	if not workspaces:
@@ -56,4 +61,4 @@ def get(workspace:typing.Optional[str]) -> str:
 	matcher = _API_TOKEN_MATCHER.search(response.text)
 	if matcher is None:
 		raise slacktoken.exceptions.InternalException("Could not extract Slack token from webpage. Maybe the Slack webpage has changed.")
-	return matcher.group(1)
+	return SlackAuthenticationInformation(matcher.group(1), cookies)
