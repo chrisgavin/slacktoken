@@ -37,11 +37,11 @@ def _get_slack_cookies() -> typing.Dict[str, str]:
 	return {"d": cookie[0]}
 
 def _get_slack_workspaces() -> typing.List[str]:
-	workspaces_path = _get_slack_configuration_directory() / "storage" / "slack-workspaces"
-	if not workspaces_path.is_file():
+	root_state_path = _get_slack_configuration_directory() / "storage" / "root-state.json"
+	if not root_state_path.is_file():
 		raise slacktoken.exceptions.MissingSlackData("workspaces file")
-	with workspaces_path.open() as workspaces_file:
-		workspaces = json.load(workspaces_file)
+	with root_state_path.open() as root_state_file:
+		workspaces = json.load(root_state_file)["workspaces"]
 	return [workspace["domain"] for workspace in workspaces.values()]
 
 def get(workspace:typing.Optional[str]) -> SlackAuthenticationInformation:
