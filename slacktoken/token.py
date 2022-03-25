@@ -1,6 +1,7 @@
 import json
 import os
 import pathlib
+import platform
 import re
 import sqlite3
 import typing
@@ -18,7 +19,9 @@ class SlackAuthenticationInformation():
 		self.cookies = cookies
 
 def _get_slack_configuration_directory() -> pathlib.Path:
-	if _XDG_CONFIG_DIR_VARIABLE in os.environ:
+	if platform.system() == "Darwin":
+		config_directory = pathlib.Path.home() / "Library/Containers/com.tinyspeck.slackmacgap/Data/Library/Application Support"
+	elif _XDG_CONFIG_DIR_VARIABLE in os.environ:
 		config_directory = pathlib.Path(_XDG_CONFIG_DIR_VARIABLE)
 	else:
 		config_directory = pathlib.Path.home() / ".config"
