@@ -15,7 +15,7 @@ pattern = "(?P<base>\\d+\\.\\d+\\.\\d+)"
 dirty = true
 
 [tool.poetry.dependencies]
-python = ">=3.6,<4.0"
+python = ">=3.8,<4.0"
 versio = { version="*" }
 importlib-metadata = { version="*" }
 requests = { version="*" }
@@ -25,6 +25,7 @@ flake8 = { version="*" }
 mypy = { version="*" }
 pytest = { version="*" }
 pytest-github-actions-annotate-failures = { version = "*", optional = true }
+playwright = "^1.21.0"
 
 [tool.poetry.extras]
 github_actions = [
