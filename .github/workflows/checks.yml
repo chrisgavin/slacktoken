@@ -16,5 +16,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup Python
         uses: chrisgavin/setup-python-action@e2a796e6217259831eedb2042df3324668078152
+      - name: Setup (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libgirepository1.0-dev
       - name: Run
         run: task ci
