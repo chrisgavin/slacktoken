@@ -1,0 +1,60 @@
+version: "3"
+
+tasks:
+
+  setup-poetry:
+    run: once
+    status:
+      - command -v poetry
+    cmds:
+      - python3 -m pip install poetry
+
+  setup:
+    run: once
+    cmds:
+      - poetry install
+
+  lint-flake8:
+    deps: [setup]
+    cmds:
+      - poetry run flake8
+
+  lint-mypy:
+    deps: [setup]
+    cmds:
+      - poetry run mypy slacktoken tests
+
+  lint-poetry-lock:
+    cmds:
+      - poetry lock --check
+
+  lint-pyproject:
+    cmds:
+      - poetry check
+
+  test-pytest:
+    deps: [setup]
+    cmds:
+      - poetry run pytest
+
+  ci:
+    deps:
+      - lint-flake8
+      - lint-mypy
+      # - lint-poetry-lock # This can't be enabled until Poetry 1.2.0 is released, which includes support for checking the lock file.
+      - lint-pyproject
+      - test-pytest
+
+  build:
+    cmds:
+      - poetry build
+
+  publish:
+    deps: [build]
+    vars:
+      version:
+        sh: git describe --tags --abbrev=0
+    cmds:
+      - poetry version {{shellQuote .VERSION}}
+      - poetry publish --no-interaction --username __token__ --password {{shellQuote .PYPI_TOKEN}}
+      - poetry version 0.0.0
