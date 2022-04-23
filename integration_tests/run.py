@@ -51,7 +51,7 @@ def main():
 		for cookie_name, cookie_value in authentication_information.cookies.items():
 			print(f"Cookie: {cookie_name}={cookie_value[:5]}***")
 
-		response = requests.post("https://slack.com/api/auth.test", json={"token": authentication_information.token}, cookies=authentication_information.cookies)
+		response = requests.get("https://slack.com/api/conversations.list", params={"token": authentication_information.token}, cookies=authentication_information.cookies)
 		response.raise_for_status()
 		if response.json()["ok"] != True:
 			raise Exception(f"Failed to authenticate with obtained token: {response.json()}.")
