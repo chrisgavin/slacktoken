@@ -1,0 +1,42 @@
+name: Integration Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  integration:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: chrisgavin/setup-python-action@e2a796e6217259831eedb2042df3324668078152
+      - name: Run
+        run: task ci
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/ms-playwright/
+          key: playwright
+      - name: Setup
+        run: |
+          task setup
+          poetry run playwright install
+      - name: Setup (Linux)
+        run: |
+          sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
+          sudo cp ./integration_tests/apt-source.list /etc/apt/sources.list.d/
+          sudo apt-get update
+          sudo apt-get install --yes slack-desktop xvfb
+      - name: Run Test
+        env:
+          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
+          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
+          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+        run: |
+          xvfb-run poetry run ./integration_tests/run.py
