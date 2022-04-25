@@ -2,6 +2,13 @@
 A library for retrieving a Slack user token and cookies from an authenticated Slack application.
 
 ## Installation
+### Linux Prerequisites
+To access the secret store which is used to decrypt cookies you will need to install some native dependencies.
+```console
+$ sudo apt-get install libgirepository1.0-dev
+```
+
+### Library Installation
 ```console
 $ python3 -m pip install slacktoken
 ```
