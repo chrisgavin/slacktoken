@@ -52,7 +52,7 @@ tasks:
   publish:
     deps: [build]
     vars:
-      version:
+      VERSION:
         sh: git describe --tags --abbrev=0
     cmds:
       - poetry version {{shellQuote .VERSION}}
