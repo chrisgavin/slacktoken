@@ -22,9 +22,7 @@ def _get_encryption_password() -> bytes:
 		unlocked_keyrings = service.unlock_sync(keyring_collections).unlocked
 
 		for keyring in unlocked_keyrings:
-			print("Searching keyring:", keyring.get_label())
 			for item in keyring.get_items():
-				print("Searching item:", item.get_label())
 				if item.get_label() == "Chromium Safe Storage":
 					item.load_secret_sync()
 					secret_text = item.get_secret().get_text()
