@@ -50,11 +50,11 @@ tasks:
       - poetry build
 
   publish:
-    deps: [build]
     vars:
       VERSION:
         sh: git describe --tags --abbrev=0
     cmds:
+      - defer: poetry version 0.0.0
       - poetry version {{shellQuote .VERSION}}
+      - task: build
       - poetry publish --no-interaction --username __token__ --password {{shellQuote .PYPI_TOKEN}}
-      - poetry version 0.0.0
