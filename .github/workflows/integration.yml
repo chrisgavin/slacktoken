@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@e2a796e6217259831eedb2042df3324668078152
+        uses: chrisgavin/setup-python-action@41e811a2a0fcb80d8226f553c3e47ab7c2d5465c
       - name: Setup (Linux)
         run: |
           sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
@@ -24,7 +24,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes slack-desktop xvfb dbus-x11 gnome-keyring libgirepository1.0-dev
       - name: Cache Playwright Browsers
-        uses: actions/cache@v2
+        uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09
         with:
           path: ~/.cache/ms-playwright/
           key: playwright

@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@e2a796e6217259831eedb2042df3324668078152
+        uses: chrisgavin/setup-python-action@41e811a2a0fcb80d8226f553c3e47ab7c2d5465c
       - name: Setup (Linux)
         run: |
           sudo apt-get update
