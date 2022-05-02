@@ -14,7 +14,7 @@ versio = { version="*" }
 importlib-metadata = { version="*" }
 requests = { version="*" }
 PyGObject = { version = "^3.42.1", platform = "linux" }
-cryptography = "^36.0.2"
+cryptography = ">=36.0.2,<38.0.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = { version="*" }
