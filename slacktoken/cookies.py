@@ -29,7 +29,7 @@ def _get_encryption_password() -> bytes:
 					assert isinstance(secret_text, str)
 					return secret_text.encode("utf-8")
 
-		raise slacktoken.exceptions.InternalException("Couldn't find encryption keyring item.")
+		return b"peanuts"
 	else:
 		raise slacktoken.exceptions.InternalException(f"Cookie decryption not implemented on {sys.platform}.")
 

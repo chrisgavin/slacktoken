@@ -4,7 +4,13 @@ on:
   push: {}
 
 jobs:
-  integration:
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        secret-store:
+          - none
+          - libsecret
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -31,4 +37,4 @@ jobs:
           SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
           SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
-        run: ./integration_tests/linux/wrapper.sh
+        run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
