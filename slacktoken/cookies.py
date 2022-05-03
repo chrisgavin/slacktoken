@@ -23,7 +23,8 @@ def _get_encryption_password() -> bytes:
 
 		for keyring in unlocked_keyrings:
 			for item in keyring.get_items():
-				if item.get_label() == "Chromium Safe Storage":
+				attributes = item.get_attributes()
+				if attributes.get("application") == "Slack" and attributes.get("xdg:schema") is not None and attributes.get("xdg:schema").startswith("chrome_libsecret_os_crypt_password_"):
 					item.load_secret_sync()
 					secret_text = item.get_secret().get_text()
 					assert isinstance(secret_text, str)
