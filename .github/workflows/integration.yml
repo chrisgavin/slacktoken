@@ -6,6 +6,7 @@ on:
       - master
   schedule:
     - cron: "0 0 * * *"
+  workflow_dispatch: {}
 
 jobs:
   check-permissions:
@@ -82,3 +83,29 @@ jobs:
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
           SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
         run: ./integration_tests/macos/run.sh
+
+  windows:
+    needs: check-permissions
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: chrisgavin/setup-python-action@89fb4272f86505246f772721ed2fd7567cfb8c86
+      - name: Setup (Windows)
+        run: choco install slack
+      - name: Cache Playwright Browsers
+        uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09
+        with:
+          path: ~/AppData/Local/ms-playwright/
+          key: playwright-windows
+      - name: Setup
+        run: |
+          task setup
+          poetry run playwright install
+      - name: Run Test
+        env:
+          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
+          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
+          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+        run: ./integration_tests/windows/run.ps1

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import pathlib
 import re
 import subprocess
 import sys
@@ -20,6 +21,8 @@ _MAGIC_LOGIN_LINK_MATCHER = re.compile("slack:\\\\/\\\\/T[A-Z0-9]+\\\\/magic-log
 def _slack_binary():
 	if sys.platform == "darwin":
 		return "/Applications/Slack.app/Contents/MacOS/Slack"
+	elif sys.platform == "win32":
+		return str(pathlib.Path(os.environ["PROGRAMFILES"]) / "Slack" / "Slack.exe")
 	else:
 		return "slack"
 
