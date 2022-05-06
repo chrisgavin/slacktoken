@@ -1,3 +1,4 @@
+import dataclasses
 import pathlib
 import sqlite3
 import sys
@@ -11,8 +12,14 @@ import cryptography.hazmat.primitives.kdf.pbkdf2
 
 import slacktoken.exceptions
 
-def _get_encryption_password() -> bytes:
+@dataclasses.dataclass
+class EncryptionConfiguration():
+	password:bytes = b"peanuts"
+	iterations:int = 1
+
+def _get_encryption_configuration() -> EncryptionConfiguration:
 	if sys.platform == "linux":
+		configuration = EncryptionConfiguration()
 		import gi
 		gi.require_version("Secret", "1")
 		import gi.repository.Secret
@@ -28,27 +35,43 @@ def _get_encryption_password() -> bytes:
 					item.load_secret_sync()
 					secret_text = item.get_secret().get_text()
 					assert isinstance(secret_text, str)
-					return secret_text.encode("utf-8")
+					configuration.password = secret_text.encode("utf-8")
+					return configuration
 
-		return b"peanuts"
+		return configuration
+	elif sys.platform == "darwin":
+		configuration = EncryptionConfiguration(iterations=1003)
+		import keyring.backends.macOS.api
+		query = keyring.backends.macOS.api.create_query(
+			kSecClass=keyring.backends.macOS.api.k_("kSecClassGenericPassword"),
+			kSecMatchLimit=keyring.backends.macOS.api.k_("kSecMatchLimitOne"),
+			kSecAttrService="Slack Safe Storage",
+			kSecReturnData=keyring.backends.macOS.api.create_cfbool(True),
+		)
+		data = keyring.backends.macOS.api.c_void_p()
+		status = keyring.backends.macOS.api.SecItemCopyMatching(query, keyring.backends.macOS.api.byref(data))
+		if status != keyring.backends.macOS.api.error.item_not_found:
+			keyring.backends.macOS.api.Error.raise_for_status(status)
+			password = keyring.backends.macOS.api.cfstr_to_str(data)
+			configuration.password = password.encode("utf-8")
+		return configuration
 	else:
 		raise slacktoken.exceptions.InternalException(f"Cookie decryption not implemented on {sys.platform}.")
 
 def _decrypt(encrypted_value:bytes) -> str:
 	encrypted_value = encrypted_value[3:] # Encrypted cookies start with a version number. e.g. "v11"
-	password = _get_encryption_password()
+	encryption_configuration = _get_encryption_configuration()
 	
 	length = 16
 	salt = b"saltysalt"
-	iterations = 1
 	kdf = cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC(
 		algorithm=cryptography.hazmat.primitives.hashes.SHA1(),
 		length=length,
-		iterations=iterations,
+		iterations=encryption_configuration.iterations,
 		salt=salt,
 	)
 
-	key = kdf.derive(password)
+	key = kdf.derive(encryption_configuration.password)
 	iv = b" " * length
 	cipher = cryptography.hazmat.primitives.ciphers.Cipher(
 		algorithm=cryptography.hazmat.primitives.ciphers.algorithms.AES(key),

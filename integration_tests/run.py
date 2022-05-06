@@ -17,8 +17,15 @@ _INTEGRATION_TEST_PASSWORD = os.environ["SLACKTOKEN_INTEGRATION_TEST_PASSWORD"]
 
 _MAGIC_LOGIN_LINK_MATCHER = re.compile("slack:\\\\/\\\\/T[A-Z0-9]+\\\\/magic-login\\\\/[0-9]+-[a-f0-9]+")
 
+def _slack_binary():
+	if sys.platform == "darwin":
+		return "/Applications/Slack.app/Contents/MacOS/Slack"
+	else:
+		return "slack"
+
 def main():
-	slack_process = subprocess.Popen(["slack"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+	slack_binary = _slack_binary()
+	slack_process = subprocess.Popen([slack_binary], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 	try:
 		with playwright.sync_api.sync_playwright() as playwright_sync:
 			browser = playwright_sync.chromium.launch(headless=False)
@@ -33,7 +40,7 @@ def main():
 			if not match:
 				raise Exception("Failed to find magic login link in page content.")
 			magic_login_link = match.group(0).replace("\/", "/")
-			subprocess.check_call(["slack", magic_login_link])
+			subprocess.check_call([slack_binary, magic_login_link])
 			browser.close()
 		
 		for attempt in range(0, 10):
