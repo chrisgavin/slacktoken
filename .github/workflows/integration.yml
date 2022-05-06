@@ -1,10 +1,22 @@
 name: Integration Tests
 
 on:
-  push: {}
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
+  check-permissions:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.id == github.event.pull_request.base.repo.id }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check Permissions
+        run: "true"
+
   linux:
+    needs: check-permissions
     strategy:
       fail-fast: false
       matrix:
@@ -40,6 +52,7 @@ jobs:
         run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
 
   macos:
+    needs: check-permissions
     runs-on: macos-12
     steps:
       - name: Checkout
