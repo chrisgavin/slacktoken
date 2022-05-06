@@ -1,8 +1,8 @@
 import json
 import os
 import pathlib
-import platform
 import re
+import sys
 import typing
 
 import requests
@@ -19,13 +19,19 @@ class SlackAuthenticationInformation():
 		self.cookies = cookies
 
 def _get_slack_configuration_directory() -> pathlib.Path:
-	if platform.system() == "Darwin":
-		config_directory = pathlib.Path.home() / "Library/Containers/com.tinyspeck.slackmacgap/Data/Library/Application Support"
+	if sys.platform == "darwin":
+		possible_config_directories = [
+			pathlib.Path.home() / "Library" / "Application Support" / "Slack",
+			pathlib.Path.home() / "Library" / "Containers" / "com.tinyspeck.slackmacgap" / "Data" / "Library" / "Application Support" / "Slack",
+		]
+		for possible_config_directory in possible_config_directories:
+			if possible_config_directory.is_dir():
+				return possible_config_directory
+		return possible_config_directories[0]
 	elif _XDG_CONFIG_DIR_VARIABLE in os.environ:
-		config_directory = pathlib.Path(_XDG_CONFIG_DIR_VARIABLE)
+		return pathlib.Path(_XDG_CONFIG_DIR_VARIABLE) / "Slack"
 	else:
-		config_directory = pathlib.Path.home() / ".config"
-	return config_directory / "Slack"
+		return pathlib.Path.home() / ".config" / "Slack"
 
 def _get_slack_workspaces() -> typing.List[str]:
 	root_state_path = _get_slack_configuration_directory() / "storage" / "root-state.json"

@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09
         with:
           path: ~/.cache/ms-playwright/
-          key: playwright
+          key: playwright-linux
       - name: Setup
         run: |
           task setup
@@ -38,3 +38,34 @@ jobs:
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
           SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
         run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
+
+  macos:
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: chrisgavin/setup-python-action@89fb4272f86505246f772721ed2fd7567cfb8c86
+      - name: Setup (macOS)
+        run: |
+          cp ./integration_tests/macos/build.keychain-db ~/Library/Keychains/
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings build.keychain
+
+          brew install --cask slack
+      - name: Cache Playwright Browsers
+        uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09
+        with:
+          path: ~/.cache/ms-playwright/
+          key: playwright-macos
+      - name: Setup
+        run: |
+          task setup
+          poetry run playwright install
+      - name: Run Test
+        env:
+          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
+          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
+          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+        run: ./integration_tests/macos/run.sh
