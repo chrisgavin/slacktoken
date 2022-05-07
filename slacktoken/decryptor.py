@@ -1,6 +1,7 @@
 import abc
 import base64
 import json
+import logging
 import sys
 import typing
 
@@ -12,6 +13,8 @@ import cryptography.hazmat.primitives.kdf.pbkdf2
 
 import slacktoken.exceptions
 import slacktoken.slack_configuration
+
+_LOGGER = logging.getLogger(__name__)
 
 class UnhandleableEncryptionConfiguration(Exception):
 	pass
@@ -159,9 +162,11 @@ def decrypt(encrypted_value:bytes) -> str:
 		raise slacktoken.exceptions.InternalException(f"Cookie decryption not implemented on {sys.platform}.")
 
 	for decryptor_implementation in decryptor_implementations:
+		_LOGGER.debug("Trying to decrypt with %s...", decryptor_implementation)
 		try:
 			decryptor = decryptor_implementation()
 			return decryptor.decrypt(encrypted_value).decode("utf-8")
 		except UnhandleableEncryptionConfiguration:
+			_LOGGER.debug("Decryption failed.")
 			continue
 	raise slacktoken.exceptions.InternalException("No usable cookie decryptor found.")

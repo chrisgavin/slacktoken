@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import logging
 import os
 import pathlib
 import re
@@ -27,6 +28,9 @@ def _slack_binary():
 		return "slack"
 
 def main():
+	logging.basicConfig()
+	logging.getLogger("slacktoken").setLevel(logging.DEBUG)
+
 	slack_binary = _slack_binary()
 	slack_process = subprocess.Popen([slack_binary], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 	try:
