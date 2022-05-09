@@ -75,18 +75,20 @@ class LibSecretDecryptor(PasswordBackedDecryptor):
 		import gi.repository.Secret
 
 		service = gi.repository.Secret.Service.get_sync(gi.repository.Secret.ServiceFlags.LOAD_COLLECTIONS)
-		keyring_collections = service.get_collections()
-		unlocked_keyrings = service.unlock_sync(keyring_collections).unlocked
+		keyring = gi.repository.Secret.Collection.for_alias_sync(service, gi.repository.Secret.COLLECTION_DEFAULT, gi.repository.Secret.CollectionFlags.NONE, None)
 
-		for keyring in unlocked_keyrings:
-			for item in keyring.get_items():
-				attributes = item.get_attributes()
-				if attributes.get("application") == "Slack" and attributes.get("xdg:schema") is not None and attributes.get("xdg:schema").startswith("chrome_libsecret_os_crypt_password_"):
-					item.load_secret_sync()
-					secret_text = item.get_secret().get_text()
-					assert isinstance(secret_text, str)
-					self.password = secret_text.encode("utf-8")
-					return
+		if keyring is None:
+			raise UnhandleableEncryptionConfiguration()
+
+		for item in keyring.get_items():
+			attributes = item.get_attributes()
+			if attributes.get("application") == "Slack" and attributes.get("xdg:schema") is not None and attributes.get("xdg:schema").startswith("chrome_libsecret_os_crypt_password_"):
+				service.unlock_sync([item])
+				item.load_secret_sync()
+				secret_text = item.get_secret().get_text()
+				assert isinstance(secret_text, str)
+				self.password = secret_text.encode("utf-8")
+				return
 		raise UnhandleableEncryptionConfiguration()
 
 	def get_password(self) -> bytes:
