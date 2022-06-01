@@ -23,7 +23,7 @@ flake8 = { version="*" }
 mypy = { version="*" }
 pytest = { version="*" }
 pytest-github-actions-annotate-failures = { version = "*", optional = true }
-playwright = "^1.21.0"
+playwright = "^1.22.0"
 types-requests = "^2.27.25"
 
 [tool.poetry.extras]
