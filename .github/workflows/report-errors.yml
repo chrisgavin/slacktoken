@@ -14,7 +14,7 @@ jobs:
     steps:
       - id: locate-runs
         name: Locate Runs
-        uses: actions/github-script@9ac08808f993958e9de277fe43a64532a609130e
+        uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da
         with:
           script: |
             const now = new Date();
