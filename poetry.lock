@@ -327,7 +327,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.
 
 [[package]]
 name = "pytest-github-actions-annotate-failures"
-version = "0.1.6"
+version = "0.1.7"
 description = "pytest plugin to annotate failed tests with a workflow command for GitHub Actions"
 category = "dev"
 optional = true
