@@ -29,7 +29,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@41e811a2a0fcb80d8226f553c3e47ab7c2d5465c
+        uses: chrisgavin/setup-python-action@86d48f6efc99f306adc92ed5eb8cc61a273368a8
       - name: Setup (Linux)
         run: |
           sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
@@ -59,7 +59,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@89fb4272f86505246f772721ed2fd7567cfb8c86
+        uses: chrisgavin/setup-python-action@86d48f6efc99f306adc92ed5eb8cc61a273368a8
       - name: Setup (macOS)
         run: |
           cp ./integration_tests/macos/build.keychain-db ~/Library/Keychains/
@@ -91,7 +91,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@89fb4272f86505246f772721ed2fd7567cfb8c86
+        uses: chrisgavin/setup-python-action@86d48f6efc99f306adc92ed5eb8cc61a273368a8
       - name: Setup (Windows)
         run: choco install slack
       - name: Cache Playwright Browsers
