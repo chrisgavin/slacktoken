@@ -24,7 +24,7 @@ mypy = { version="*" }
 pytest = { version="*" }
 pytest-github-actions-annotate-failures = { version = "*", optional = true }
 playwright = "^1.25.2"
-types-requests = "^2.28.10"
+types-requests = "^2.28.11"
 
 [tool.poetry.extras]
 github_actions = [
