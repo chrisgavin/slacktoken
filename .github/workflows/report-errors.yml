@@ -7,6 +7,10 @@ on:
     paths:
       - ".github/workflows/report-errors.yml"
 
+permissions:
+  actions: write
+  issues: write
+
 jobs:
   report-errors:
     name: Report Errors
