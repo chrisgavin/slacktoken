@@ -56,7 +56,7 @@ def main():
 			page = browser.new_page()
 			for attempt in range(10):
 				logger.info(f"Logging in to Slack attempt {attempt+1}...")
-				page.goto(f"https://{_INTEGRATION_TEST_WORKSPACE}.slack.com/")
+				page.goto(f"https://{_INTEGRATION_TEST_WORKSPACE}.slack.com/sign_in_with_password")
 
 				logger.info("Waiting for login form...")
 				page.fill("input[data-qa=login_email]", _INTEGRATION_TEST_USER)
