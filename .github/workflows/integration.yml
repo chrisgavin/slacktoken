@@ -29,7 +29,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@41e811a2a0fcb80d8226f553c3e47ab7c2d5465c
+        uses: chrisgavin/setup-python-action@ed87b89329f434b09cda706dc5bcc7af55485379
       - name: Setup (Linux)
         run: |
           sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
@@ -60,7 +60,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@89fb4272f86505246f772721ed2fd7567cfb8c86
+        uses: chrisgavin/setup-python-action@ed87b89329f434b09cda706dc5bcc7af55485379
       - name: Setup (macOS)
         run: |
           cp ./integration_tests/macos/build.keychain-db ~/Library/Keychains/
@@ -93,7 +93,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@89fb4272f86505246f772721ed2fd7567cfb8c86
+        uses: chrisgavin/setup-python-action@ed87b89329f434b09cda706dc5bcc7af55485379
       - name: Setup (Windows)
         run: choco install slack
       - name: Cache Playwright Browsers
