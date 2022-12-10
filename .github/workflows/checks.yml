@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@41e811a2a0fcb80d8226f553c3e47ab7c2d5465c
+        uses: chrisgavin/setup-python-action@5c33763c5e84810072f66d1116444ab8d101bc32
       - name: Setup (Linux)
         run: |
           sudo apt-get update
