@@ -59,9 +59,9 @@ def main():
 				page.goto(f"https://{_INTEGRATION_TEST_WORKSPACE}.slack.com/")
 
 				logger.info("Waiting for login form...")
-				page.fill("#email", _INTEGRATION_TEST_USER)
-				page.fill("#password", _INTEGRATION_TEST_PASSWORD)
-				page.click("#signin_btn")
+				page.fill("input[data-qa=login_email]", _INTEGRATION_TEST_USER)
+				page.fill("input[data-qa=login_password]", _INTEGRATION_TEST_PASSWORD)
+				page.click("button[data-qa=signin_button]")
 
 				logger.info("Waiting for 2FA prompt...")
 				page.wait_for_selector("#enter_code_app_root")
