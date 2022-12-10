@@ -75,6 +75,8 @@ jobs:
           path: ~/Library/Caches/ms-playwright/
           key: playwright-macos
       - name: Setup
+        env:
+          SYSTEM_VERSION_COMPAT: "0" # Workaround for python-poetry/poetry#7161.
         run: |
           task setup
           poetry run playwright install
