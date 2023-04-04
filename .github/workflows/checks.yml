@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b
+        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
       - name: Setup Python
         uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
       - name: Setup (Linux)
