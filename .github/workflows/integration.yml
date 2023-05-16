@@ -46,6 +46,7 @@ jobs:
           task setup
           poetry run playwright install
       - name: Run Test
+        timeout-minutes: 60
         env:
           SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
@@ -81,6 +82,7 @@ jobs:
           task setup
           poetry run playwright install
       - name: Run Test
+        timeout-minutes: 60
         env:
           SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
@@ -108,6 +110,7 @@ jobs:
           task setup
           poetry run playwright install
       - name: Run Test
+        timeout-minutes: 60
         env:
           SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
