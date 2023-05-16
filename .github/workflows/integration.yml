@@ -89,6 +89,17 @@ jobs:
           SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
           SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
         run: ./integration_tests/macos/run.sh
+      - name: Debug
+        if: ${{ failure() }}
+        run: |
+          mkdir ./debug/
+          screencapture ./debug/screenshot.png
+      - name: Upload Debug Artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-debug
+          path: ./debug/
 
   windows:
     needs: check-permissions
