@@ -64,12 +64,14 @@ jobs:
         uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
       - name: Setup (macOS)
         run: |
-          cp ./integration_tests/macos/build.keychain-db ~/Library/Keychains/
+          security create-keychain -p "" build.keychain
           security default-keychain -s build.keychain
-          security unlock-keychain -p "" build.keychain
-          security set-keychain-settings build.keychain
+          security unlock-keychain -p ""
+          security set-keychain-settings
+          security add-generic-password -a "Slack Key" -s "Slack Safe Storage" -w "AAAAAAAAAAAAAAAAAAAAAA==" -A build.keychain
 
           brew install --cask slack
+
       - name: Cache Playwright Browsers
         uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
         with:
@@ -82,7 +84,7 @@ jobs:
           task setup
           poetry run playwright install
       - name: Run Test
-        timeout-minutes: 60
+        timeout-minutes: 10
         env:
           SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
