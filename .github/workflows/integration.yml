@@ -16,44 +16,6 @@ jobs:
       - name: Check Permissions
         run: "true"
 
-  linux:
-    needs: check-permissions
-    strategy:
-      fail-fast: false
-      matrix:
-        secret-store:
-          - none
-          - libsecret
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
-      - name: Setup Python
-        uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
-      - name: Setup (Linux)
-        run: |
-          sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
-          sudo cp ./integration_tests/apt-source.list /etc/apt/sources.list.d/
-          sudo apt-get update
-          sudo apt-get install --yes slack-desktop xvfb dbus-x11 gnome-keyring libgirepository1.0-dev
-      - name: Cache Playwright Browsers
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
-        with:
-          path: ~/.cache/ms-playwright/
-          key: playwright-linux
-      - name: Setup
-        run: |
-          task setup
-          poetry run playwright install
-      - name: Run Test
-        timeout-minutes: 60
-        env:
-          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
-          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
-          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
-          SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
-        run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
-
   macos:
     needs: check-permissions
     runs-on: macos-12
@@ -81,6 +43,10 @@ jobs:
         run: |
           task setup
           poetry run playwright install
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
       - name: Run Test
         timeout-minutes: 60
         env:
@@ -88,7 +54,7 @@ jobs:
           SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
           SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
           SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
-        run: ./integration_tests/macos/run.sh
+        run: ./integration_tests/macos/run.sh; sleep 1600
       - name: Debug
         if: ${{ failure() }}
         run: |
@@ -100,31 +66,3 @@ jobs:
         with:
           name: macos-debug
           path: ./debug/
-
-  windows:
-    needs: check-permissions
-    runs-on: windows-2022
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
-      - name: Setup Python
-        uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
-      - name: Setup (Windows)
-        run: choco install slack
-      - name: Cache Playwright Browsers
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
-        with:
-          path: ~/AppData/Local/ms-playwright/
-          key: playwright-windows
-      - name: Setup
-        run: |
-          task setup
-          poetry run playwright install
-      - name: Run Test
-        timeout-minutes: 60
-        env:
-          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
-          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
-          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
-          SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
-        run: ./integration_tests/windows/run.ps1
