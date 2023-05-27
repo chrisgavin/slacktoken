@@ -6,7 +6,11 @@ on:
       - master
   schedule:
     - cron: "0 0 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      remote-debug:
+        description: "Enable remote debugging for a specific job."
+        required: false
 
 jobs:
   check-permissions:
@@ -45,6 +49,11 @@ jobs:
         run: |
           task setup
           poetry run playwright install
+      - name: Remote Debugging
+        if: ${{ github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
+        uses: mxschmitt/action-tmate@53a5c23a925969671a6bb98ea70a4f650928ef93
+        with:
+          limit-access-to-actor: true
       - name: Run Test
         timeout-minutes: 60
         env:
@@ -81,6 +90,11 @@ jobs:
         run: |
           task setup
           poetry run playwright install
+      - name: Remote Debugging
+        if: ${{ github.event.inputs.remote-debug == 'macos' }}
+        uses: mxschmitt/action-tmate@53a5c23a925969671a6bb98ea70a4f650928ef93
+        with:
+          limit-access-to-actor: true
       - name: Run Test
         timeout-minutes: 60
         env:
@@ -89,7 +103,7 @@ jobs:
           SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
           SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
         run: ./integration_tests/macos/run.sh
-      - name: Debug
+      - name: Collect Debug Artifacts
         if: ${{ failure() }}
         run: |
           mkdir ./debug/
@@ -120,6 +134,11 @@ jobs:
         run: |
           task setup
           poetry run playwright install
+      - name: Remote Debugging
+        if: ${{ github.event.inputs.remote-debug == 'windows' }}
+        uses: mxschmitt/action-tmate@53a5c23a925969671a6bb98ea70a4f650928ef93
+        with:
+          limit-access-to-actor: true
       - name: Run Test
         timeout-minutes: 60
         env:
