@@ -78,7 +78,7 @@ jobs:
           security unlock-keychain -p "" build.keychain
           security set-keychain-settings build.keychain
 
-          brew install --cask slack
+          brew install --cask slack@4.31.156 # The latest version of Slack has a bug that causes the 2FA screen to be displayed twice.
       - name: Cache Playwright Browsers
         uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
         with:
