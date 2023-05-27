@@ -26,7 +26,7 @@ jobs:
             const workflowRuns = await github.paginate(github.rest.actions.listWorkflowRuns, {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              event: "schedule",
+              branch: context.repo.default_branch,
               workflow_id: "integration.yml",
               created: `>${yesterday.toISOString()}`,
             });
