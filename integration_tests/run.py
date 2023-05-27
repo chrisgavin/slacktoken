@@ -57,28 +57,31 @@ def main():
 			browser = playwright_sync.chromium.launch(headless=False)
 			page = browser.new_page()
 			for attempt in range(10):
-				logger.info(f"Logging in to Slack attempt {attempt+1}...")
-				page.goto(f"https://{_INTEGRATION_TEST_WORKSPACE}.slack.com/sign_in_with_password")
+				try:
+					logger.info(f"Logging in to Slack attempt {attempt+1}...")
+					page.goto(f"https://{_INTEGRATION_TEST_WORKSPACE}.slack.com/sign_in_with_password")
 
-				logger.info("Waiting for login form...")
-				page.fill("input[data-qa=login_email]", _INTEGRATION_TEST_USER)
-				page.fill("input[data-qa=login_password]", _INTEGRATION_TEST_PASSWORD)
-				page.click("button[data-qa=signin_button]")
+					logger.info("Waiting for login form...")
+					page.fill("input[data-qa=login_email]", _INTEGRATION_TEST_USER)
+					page.fill("input[data-qa=login_password]", _INTEGRATION_TEST_PASSWORD)
+					page.click("button[data-qa=signin_button]")
 
-				logger.info("Waiting for 2FA prompt...")
-				page.wait_for_selector("#enter_code_app_root")
-				if any(message in page.content() for message in _RETRY_MESSAGES):
-					logger.info("Rate limited...")
-					time.sleep(datetime.timedelta(minutes=3).total_seconds())
-					continue
-				with page.expect_response("**/ssb/redirect*") as event:
-					code = totp.now()
-					for index, digit in enumerate(code):
-						page.fill(f".two_factor_input_item input >> nth={index}", digit)
+					logger.info("Waiting for 2FA prompt...")
+					page.wait_for_selector("#enter_code_app_root")
+					if any(message in page.content() for message in _RETRY_MESSAGES):
+						logger.info("Rate limited...")
+						time.sleep(datetime.timedelta(minutes=3).total_seconds())
+						continue
+					with page.expect_response("**/ssb/redirect*") as event:
+						code = totp.now()
+						for index, digit in enumerate(code):
+							page.fill(f".two_factor_input_item input >> nth={index}", digit)
 
-					logger.info("Waiting for login to complete...")
-					content = event.value.body().decode("utf-8")
-					break
+						logger.info("Waiting for login to complete...")
+						content = event.value.body().decode("utf-8")
+						break
+				except Exception:
+					logging.exception("Failed to get token.")
 			else:
 				raise SystemExit("Failed to log in after final attempt.")
 			match = _MAGIC_LOGIN_LINK_MATCHER.search(content)
