@@ -57,10 +57,10 @@ jobs:
 
             console.log("No relevant runs found.");
             return false;
-      - name: Create Issue
-        if: ${{ steps.locate-runs.outputs.result == 'true' }}
+      - name: Create or Update Issue
         uses: chrisgavin/create-or-update-issue-action@f97f20544d582c5f2991d5de9b23c0a059cb072e
         with:
           title: Integration tests are currently failing.
           body: Integration tests on the repository are currently failing. This might be due to a change in the way Slack works.
           assignees: chrisgavin
+          close: ${{ steps.locate-runs.outputs.result == 'false' }}
