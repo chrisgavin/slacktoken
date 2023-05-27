@@ -20,6 +20,8 @@ _INTEGRATION_TEST_USER = os.environ["SLACKTOKEN_INTEGRATION_TEST_USER"]
 _INTEGRATION_TEST_PASSWORD = os.environ["SLACKTOKEN_INTEGRATION_TEST_PASSWORD"]
 _INTEGRATION_TEST_TOTP_SEED = os.environ["SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED"]
 
+_CI = bool(os.environ.get("CI"))
+
 _MAGIC_LOGIN_LINK_MATCHER = re.compile("slack:\\\\/\\\\/T[A-Z0-9]+\\\\/magic-login\\\\/[0-9]+-[a-f0-9]+")
 _RETRY_MESSAGES = {
 	"Wait a few minutes and try again.",
@@ -110,7 +112,7 @@ def main():
 		if response.json()["ok"] != True:
 			raise Exception(f"Failed to authenticate with obtained token: {response.json()}.")
 	finally:
-		if not arguments.debug_login:
+		if not arguments.debug_login and not _CI:
 			slack_process.terminate()
 			slack_process.wait()
 
