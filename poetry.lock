@@ -636,14 +636,17 @@ pycairo = ">=1.16,<2.0"
 
 [[package]]
 name = "pyotp"
-version = "2.8.0"
+version = "2.9.0"
 description = "Python One Time Password Library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyotp-2.8.0-py3-none-any.whl", hash = "sha256:889d037fdde6accad28531fc62a790f089e5dfd5b638773e9ee004cce074a2e5"},
-    {file = "pyotp-2.8.0.tar.gz", hash = "sha256:c2f5e17d9da92d8ec1f7de6331ab08116b9115adbabcba6e208d46fc49a98c5a"},
+    {file = "pyotp-2.9.0-py3-none-any.whl", hash = "sha256:81c2e5865b8ac55e825b0358e496e1d9387c811e85bb40e71a3b29b288963612"},
+    {file = "pyotp-2.9.0.tar.gz", hash = "sha256:346b6642e0dbdde3b4ff5a930b664ca82abfa116356ed48cc42c7d6590d36f63"},
 ]
+
+[package.extras]
+test = ["coverage", "mypy", "ruff", "wheel"]
 
 [[package]]
 name = "pytest"
@@ -817,4 +820,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4.0"
-content-hash = "0bbf60c2906ab824927c55824baa686a6b09779904905e0e0ebc1491ae7955e1"
+content-hash = "816f7a1ec8a4a9083a70682f77456dbb0a09d758ffe499cafad6e7991f722b07"
