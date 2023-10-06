@@ -1,1 +1,1 @@
-deb [arch=amd64] https://apt.pxd.io/ main main
+deb [arch=amd64] https://packagecloud.io/slacktechnologies/slack/debian/ jessie main
