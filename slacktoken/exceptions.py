@@ -4,10 +4,6 @@ class MissingSlackData(Exception):
 	def __init__(self, data:str) -> None:
 		super().__init__(f"Slack {data} is missing. Have you installed Slack and logged in?")
 
-class NotSignedInException(Exception):
-	def __init__(self) -> None:
-		super().__init__("You are not signed in to any Slack workspaces.")
-
 class NotSignedInToWorkspaceException(Exception):
 	def __init__(self, workspace:str) -> None:
 		super().__init__(f"You are not signed in to the {workspace} Slack workspace.")
