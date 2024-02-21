@@ -27,7 +27,7 @@ def get(workspace:typing.Optional[str]) -> SlackAuthenticationInformation:
 		if len(authentication_information["teams"]) == 1:
 			workspace = list(authentication_information["teams"].values())[0]["domain"]
 		else:
-			raise slacktoken.exceptions.AmbiguousWorkspaceException([team["domain"] for team in authentication_information["teams"]])
+			raise slacktoken.exceptions.AmbiguousWorkspaceException([team["domain"] for team in authentication_information["teams"].values()])
 	
 	workspace_informations = [team for team in authentication_information["teams"].values() if team["domain"] == workspace]
 	if len(workspace_informations) == 0:
