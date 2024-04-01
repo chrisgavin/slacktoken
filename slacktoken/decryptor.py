@@ -104,7 +104,7 @@ class MacOSDecryptor(PasswordBackedDecryptor):
 			kSecClass=keyring.backends.macOS.api.k_("kSecClassGenericPassword"),
 			kSecMatchLimit=keyring.backends.macOS.api.k_("kSecMatchLimitOne"),
 			kSecAttrService="Slack Safe Storage",
-			kSecReturnData=keyring.backends.macOS.api.create_cfbool(True),
+			kSecReturnData=True,
 		)
 		data = keyring.backends.macOS.api.c_void_p()
 		status = keyring.backends.macOS.api.SecItemCopyMatching(query, keyring.backends.macOS.api.byref(data))
