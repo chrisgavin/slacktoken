@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
       - name: Setup Python
         uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
       - name: Setup (Linux)
@@ -68,7 +68,7 @@ jobs:
     runs-on: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
       - name: Setup Python
         uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
       - name: Setup (macOS)
@@ -120,7 +120,7 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
       - name: Setup Python
         uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
       - name: Setup (Windows)
