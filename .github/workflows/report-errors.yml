@@ -48,7 +48,7 @@ jobs:
                   repo: context.repo.repo,
                   run_id: failedRun.id,
                 })
-                return false;
+                return null;
               } else {
                 console.log("Run is already at maximum retries.");
                 return true;
@@ -59,6 +59,7 @@ jobs:
             return false;
       - name: Create or Update Issue
         uses: chrisgavin/create-or-update-issue-action@f97f20544d582c5f2991d5de9b23c0a059cb072e
+        if: ${{ steps.locate-runs.outputs.result != 'null' }}
         with:
           title: Integration tests are currently failing.
           body: Integration tests on the repository are currently failing. This might be due to a change in the way Slack works.
