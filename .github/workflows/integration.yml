@@ -12,6 +12,12 @@ on:
         description: "Enable remote debugging for a specific job."
         required: false
 
+env:
+  SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
+  SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
+  SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+  SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
+
 jobs:
   check-permissions:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.id == github.event.pull_request.base.repo.id }}
@@ -56,11 +62,6 @@ jobs:
           limit-access-to-actor: true
       - name: Run Test
         timeout-minutes: 60
-        env:
-          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
-          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
-          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
-          SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
         run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
 
   macos:
@@ -97,11 +98,6 @@ jobs:
           limit-access-to-actor: true
       - name: Run Test
         timeout-minutes: 60
-        env:
-          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
-          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
-          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
-          SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
         run: ./integration_tests/macos/run.sh
       - name: Collect Debug Artifacts
         if: ${{ failure() }}
@@ -141,9 +137,4 @@ jobs:
           limit-access-to-actor: true
       - name: Run Test
         timeout-minutes: 60
-        env:
-          SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
-          SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
-          SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
-          SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
         run: ./integration_tests/windows/run.ps1
