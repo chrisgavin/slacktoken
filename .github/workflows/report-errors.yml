@@ -58,7 +58,7 @@ jobs:
             console.log("No relevant runs found.");
             return false;
       - name: Create or Update Issue
-        uses: chrisgavin/create-or-update-issue-action@f97f20544d582c5f2991d5de9b23c0a059cb072e
+        uses: chrisgavin/create-or-update-issue-action@36053cf62f01b8ee88e7a194a59661e289647511
         if: ${{ steps.locate-runs.outputs.result != 'null' }}
         with:
           title: Integration tests are currently failing.
