@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@492356cf53b35b71935f2521da0e57af63829c95
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f
       - name: Run
         run: task publish
         env:
