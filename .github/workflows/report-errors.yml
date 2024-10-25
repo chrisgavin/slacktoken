@@ -62,6 +62,7 @@ jobs:
         if: ${{ steps.locate-runs.outputs.result != 'null' }}
         with:
           title: Integration tests are currently failing.
-          body: Integration tests on the repository are currently failing. This might be due to a change in the way Slack works.
+          body: |-
+            See ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} for more details about the failure.
           assignees: chrisgavin
           close: ${{ steps.locate-runs.outputs.result == 'false' }}
