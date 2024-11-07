@@ -138,7 +138,6 @@ class WindowsDecryptor(Decryptor):
 		import win32crypt
 		decrypted_key = win32crypt.CryptUnprotectData(encrypted_key, None, None, None, 0)[1]
 
-		
 		iv = encrypted_value[:12]
 		tag = encrypted_value[-16:]
 		cipher = cryptography.hazmat.primitives.ciphers.Cipher(
@@ -151,7 +150,7 @@ class WindowsDecryptor(Decryptor):
 
 		return decrypted_value
 
-def decrypt(encrypted_value:bytes) -> str:
+def decrypt(encrypted_value:bytes) -> bytes:
 	decryptor_implementations:typing.List[typing.Type[Decryptor]] = []
 	if sys.platform == "linux":
 		decryptor_implementations.append(LibSecretDecryptor)
@@ -167,7 +166,7 @@ def decrypt(encrypted_value:bytes) -> str:
 		_LOGGER.debug("Trying to decrypt with %s...", decryptor_implementation)
 		try:
 			decryptor = decryptor_implementation()
-			return decryptor.decrypt(encrypted_value).decode("utf-8")
+			return decryptor.decrypt(encrypted_value)
 		except UnhandleableEncryptionConfiguration:
 			_LOGGER.debug("Decryption failed.")
 			continue
