@@ -16,7 +16,7 @@ requests = { version="*" }
 PyGObject = { version = "^3.42.1", platform = "linux" }
 cryptography = ">=36.0.2,<44.0.0"
 keyring = { version = ">=23.5,<26.0", platform = "darwin" }
-pywin32 = {version = ">=304,<307", platform = "win32"}
+pywin32 = {version = ">=304,<309", platform = "win32"}
 
 [tool.poetry.dev-dependencies]
 flake8 = { version="*" }
