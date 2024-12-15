@@ -61,6 +61,7 @@ jobs:
         with:
           limit-access-to-actor: true
       - name: Run Test
+        if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
         timeout-minutes: 60
         run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
 
@@ -97,6 +98,7 @@ jobs:
         with:
           limit-access-to-actor: true
       - name: Run Test
+        if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == 'macos' }}
         timeout-minutes: 60
         run: ./integration_tests/macos/run.sh
       - name: Collect Debug Artifacts
@@ -136,5 +138,6 @@ jobs:
         with:
           limit-access-to-actor: true
       - name: Run Test
+        if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == 'windows' }}
         timeout-minutes: 60
         run: ./integration_tests/windows/run.ps1
