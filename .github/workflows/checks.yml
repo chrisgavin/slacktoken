@@ -19,6 +19,6 @@ jobs:
       - name: Setup (Linux)
         run: |
           sudo apt-get update
-          sudo apt-get install --yes libgirepository1.0-dev
+          sudo apt-get install --yes libgirepository1.0-dev libcairo2-dev
       - name: Run
         run: task ci

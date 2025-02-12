@@ -45,7 +45,7 @@ jobs:
           sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
           sudo cp ./integration_tests/apt-source.list /etc/apt/sources.list.d/
           sudo apt-get update
-          sudo apt-get install --yes slack-desktop xvfb dbus-x11 gnome-keyring libgirepository1.0-dev
+          sudo apt-get install --yes slack-desktop xvfb dbus-x11 gnome-keyring libgirepository1.0-dev libcairo2-dev gir1.2-secret-1
       - name: Cache Playwright Browsers
         uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
         with:
