@@ -14,7 +14,7 @@ versio = { version="*" }
 importlib-metadata = { version="*" }
 requests = { version="*" }
 PyGObject = { version = "^3.42.1", platform = "linux" }
-cryptography = ">=36.0.2,<44.0.0"
+cryptography = ">=36.0.2,<45.0.0"
 keyring = { version = ">=23.5,<26.0", platform = "darwin" }
 pywin32 = {version = ">=304,<309", platform = "win32"}
 wmi = {version = ">=1.5.1", platform = "win32"}
