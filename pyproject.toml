@@ -9,7 +9,7 @@ authors = [
 repository = "https://github.com/chrisgavin/slacktoken/"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<4.0"
+python = ">=3.9.2,<4.0"
 versio = { version="*" }
 importlib-metadata = { version="*" }
 requests = { version="*" }
