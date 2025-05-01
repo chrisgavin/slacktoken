@@ -57,7 +57,7 @@ jobs:
           poetry run playwright install
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
-        uses: mxschmitt/action-tmate@e5c7151931ca95bad1c6f4190c730ecf8c7dde48
+        uses: mxschmitt/action-tmate@c606f8612a802e46b3742322514c09fbc8c4afee
         with:
           limit-access-to-actor: true
       - name: Run Test
@@ -94,7 +94,7 @@ jobs:
           poetry run playwright install
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'macos' }}
-        uses: mxschmitt/action-tmate@e5c7151931ca95bad1c6f4190c730ecf8c7dde48
+        uses: mxschmitt/action-tmate@c606f8612a802e46b3742322514c09fbc8c4afee
         with:
           limit-access-to-actor: true
       - name: Run Test
@@ -134,7 +134,7 @@ jobs:
           poetry run playwright install
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'windows' }}
-        uses: mxschmitt/action-tmate@e5c7151931ca95bad1c6f4190c730ecf8c7dde48
+        uses: mxschmitt/action-tmate@c606f8612a802e46b3742322514c09fbc8c4afee
         with:
           limit-access-to-actor: true
       - name: Run Test
