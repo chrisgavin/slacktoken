@@ -24,7 +24,7 @@ flake8 = { version="*" }
 mypy = { version="*" }
 pytest = { version="*" }
 pytest-github-actions-annotate-failures = { version = "*", optional = true }
-playwright = "^1.52.0"
+playwright = "^1.53.0"
 pyotp = "^2.9.0"
 types-requests = "^2.32.0"
 
