@@ -26,7 +26,7 @@ pytest = { version="*" }
 pytest-github-actions-annotate-failures = { version = "*", optional = true }
 playwright = "^1.53.0"
 pyotp = "^2.9.0"
-types-requests = "^2.32.0"
+types-requests = "^2.32.4"
 
 [tool.poetry.scripts]
 slacktoken = "slacktoken.__main__:main"
