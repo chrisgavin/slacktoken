@@ -37,9 +37,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f # 0.1.0
       - name: Setup (Linux)
         run: |
           sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
@@ -47,7 +47,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes slack-desktop xvfb dbus-x11 gnome-keyring libgirepository1.0-dev libcairo2-dev gir1.2-secret-1 libgles2
       - name: Cache Playwright Browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/ms-playwright/
           key: playwright-linux
@@ -57,7 +57,7 @@ jobs:
           poetry run playwright install
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
-        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c
+        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c # v3.22
         with:
           limit-access-to-actor: true
       - name: Run Test
@@ -70,9 +70,9 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f # 0.1.0
       - name: Setup (macOS)
         run: |
           cp ./integration_tests/macos/build.keychain-db ~/Library/Keychains/
@@ -82,7 +82,7 @@ jobs:
 
           brew install --cask slack
       - name: Cache Playwright Browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/Library/Caches/ms-playwright/
           key: playwright-macos
@@ -94,7 +94,7 @@ jobs:
           poetry run playwright install
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'macos' }}
-        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c
+        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c # v3.22
         with:
           limit-access-to-actor: true
       - name: Run Test
@@ -118,13 +118,13 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python
-        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f # 0.1.0
       - name: Setup (Windows)
         run: choco install slack
       - name: Cache Playwright Browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/AppData/Local/ms-playwright/
           key: playwright-windows
@@ -134,7 +134,7 @@ jobs:
           poetry run playwright install
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'windows' }}
-        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c
+        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c # v3.22
         with:
           limit-access-to-actor: true
       - name: Run Test

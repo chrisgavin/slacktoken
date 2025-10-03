@@ -9,7 +9,6 @@ on:
       - master
 
 permissions:
-  actions: write
   issues: write
 
 jobs:
@@ -18,22 +17,8 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ github.event.workflow_run.event == 'schedule' }}
     steps:
-      - name: Re-run Workflow
-        if: ${{ github.event.workflow_run.conclusion != 'success' && github.event.workflow_run.run_attempt < 5 }}
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
-        env:
-          RUN_ID: ${{ github.event.workflow_run.id }}
-        with:
-          script: |
-            console.log("Retrying run.");
-            github.request("POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun-failed-jobs", {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: process.env.RUN_ID,
-            });
-
       - name: Create or Update Issue
-        uses: chrisgavin/create-or-update-issue-action@6c33f901f0e5b25f96409e670b49814902d35fa3
+        uses: chrisgavin/create-or-update-issue-action@6c33f901f0e5b25f96409e670b49814902d35fa3 # 0.0.4
         if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.run_attempt >= 5 }}
         with:
           title: Integration tests are currently failing.
