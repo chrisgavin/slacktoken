@@ -47,7 +47,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes slack-desktop xvfb dbus-x11 gnome-keyring libgirepository1.0-dev libcairo2-dev gir1.2-secret-1 libgles2
       - name: Cache Playwright Browsers
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ~/.cache/ms-playwright/
           key: playwright-linux
@@ -82,7 +82,7 @@ jobs:
 
           brew install --cask slack
       - name: Cache Playwright Browsers
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ~/Library/Caches/ms-playwright/
           key: playwright-macos
@@ -124,7 +124,7 @@ jobs:
       - name: Setup (Windows)
         run: choco install slack
       - name: Cache Playwright Browsers
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ~/AppData/Local/ms-playwright/
           key: playwright-windows
