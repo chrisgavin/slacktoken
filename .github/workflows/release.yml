@@ -1,0 +1,19 @@
+name: "Release"
+
+on:
+  push:
+    tags:
+      - "**"
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Setup Python
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f # 0.1.0
+      - name: Run
+        run: task publish
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}

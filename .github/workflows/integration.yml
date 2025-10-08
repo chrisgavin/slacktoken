@@ -1,0 +1,177 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      remote-debug:
+        description: "Enable remote debugging for a specific job."
+        required: false
+
+env:
+  SLACKTOKEN_INTEGRATION_TEST_WORKSPACE: ${{ secrets.INTEGRATION_TEST_WORKSPACE }}
+  SLACKTOKEN_INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
+  SLACKTOKEN_INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+  SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED: ${{ secrets.INTEGRATION_TEST_TOTP_SEED }}
+
+jobs:
+  check-permissions:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.id == github.event.pull_request.base.repo.id }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check Permissions
+        run: "true"
+
+  linux:
+    needs: check-permissions
+    strategy:
+      fail-fast: false
+      matrix:
+        secret-store:
+          - none
+          - libsecret
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Setup Python
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f # 0.1.0
+      - name: Setup (Linux)
+        run: |
+          sudo cp ./integration_tests/apt-key.asc /etc/apt/trusted.gpg.d/
+          sudo cp ./integration_tests/apt-source.list /etc/apt/sources.list.d/
+          sudo apt-get update
+          sudo apt-get install --yes slack-desktop xvfb dbus-x11 gnome-keyring libgirepository1.0-dev libcairo2-dev gir1.2-secret-1 libgles2
+      - name: Cache Playwright Browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright/
+          key: playwright-linux
+      - name: Setup
+        run: |
+          task setup
+          poetry run playwright install
+      - name: Remote Debugging
+        if: ${{ github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
+        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c # v3.22
+        with:
+          limit-access-to-actor: true
+      - name: Run Test
+        if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
+        timeout-minutes: 60
+        run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
+      - name: Wait 5m Before Killing Remote Debugging
+        if: ${{ always() && github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
+        run: |
+          sleep 5m
+
+  macos:
+    needs: check-permissions
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Setup Python
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f # 0.1.0
+      - name: Setup (macOS)
+        run: |
+          cp ./integration_tests/macos/build.keychain-db ~/Library/Keychains/
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings build.keychain
+
+          brew install --cask slack
+      - name: Cache Playwright Browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/Library/Caches/ms-playwright/
+          key: playwright-macos
+      - name: Setup
+        env:
+          SYSTEM_VERSION_COMPAT: "0" # Workaround for python-poetry/poetry#7161.
+        run: |
+          task setup
+          poetry run playwright install
+      - name: Enable Debug Settings
+        if: ${{ github.event.inputs.remote-debug == 'macos' }}
+        run: |
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -configure -allowAccessFor -allUsers -privs -all
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -configure -clientopts -setvnclegacy -vnclegacy yes 
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -restart -agent -console
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate
+
+          epoch="$(date +%s)"
+          sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" \
+            "BEGIN TRANSACTION; \
+              DELETE FROM access WHERE client = 'com.apple.screensharing.agent'; \
+              COMMIT; \
+              BEGIN TRANSACTION; \
+              INSERT INTO access(service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,flags,last_modified) \
+                VALUES('kTCCServicePostEvent','com.apple.screensharing.agent',0,2,4,1,0,0,${epoch}); \
+              INSERT INTO access(service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,flags,last_modified) \
+                VALUES('kTCCServiceScreenCapture','com.apple.screensharing.agent',0,2,4,1,0,0,${epoch}); \
+              COMMIT;"
+
+          brew install --cask ngrok
+      - name: Remote Debugging
+        if: ${{ github.event.inputs.remote-debug == 'macos' }}
+        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c # v3.22
+        with:
+          limit-access-to-actor: true
+      - name: Run Test
+        if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == 'macos' }}
+        timeout-minutes: 60
+        run: ./integration_tests/macos/run.sh
+      - name: Collect Debug Artifacts
+        if: ${{ failure() }}
+        run: |
+          mkdir ./debug/
+          screencapture ./debug/screenshot.png
+      - name: Upload Debug Artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-debug
+          path: ./debug/
+      - name: Wait 5m Before Killing Remote Debugging
+        if: ${{ always() && github.event.inputs.remote-debug == 'macos' }}
+        run: |
+          sleep 5m
+
+  windows:
+    needs: check-permissions
+    runs-on: windows-2025
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Setup Python
+        uses: chrisgavin/setup-python-action@a34b0464c3d5c42387108464540d11a0e541176f # 0.1.0
+      - name: Setup (Windows)
+        run: choco install slack
+      - name: Cache Playwright Browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/AppData/Local/ms-playwright/
+          key: playwright-windows
+      - name: Setup
+        run: |
+          task setup
+          poetry run playwright install
+      - name: Remote Debugging
+        if: ${{ github.event.inputs.remote-debug == 'windows' }}
+        uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c # v3.22
+        with:
+          limit-access-to-actor: true
+      - name: Run Test
+        if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == 'windows' }}
+        timeout-minutes: 60
+        run: ./integration_tests/windows/run.ps1
+      - name: Wait 5m Before Killing Remote Debugging
+        if: ${{ always() && github.event.inputs.remote-debug == 'windows' }}
+        shell: powershell
+        run: |
+          Start-Sleep -s 300
