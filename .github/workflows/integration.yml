@@ -92,6 +92,27 @@ jobs:
         run: |
           task setup
           poetry run playwright install
+      - name: Enable Debug Settings
+        if: ${{ github.event.inputs.remote-debug == 'macos' }}
+        run: |
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -configure -allowAccessFor -allUsers -privs -all
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -configure -clientopts -setvnclegacy -vnclegacy yes 
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -restart -agent -console
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate
+
+          epoch="$(date +%s)"
+          sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" \
+            "BEGIN TRANSACTION; \
+              DELETE FROM access WHERE client = 'com.apple.screensharing.agent'; \
+              COMMIT; \
+              BEGIN TRANSACTION; \
+              INSERT INTO access(service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,flags,last_modified) \
+                VALUES('kTCCServicePostEvent','com.apple.screensharing.agent',0,2,4,1,0,0,${epoch}); \
+              INSERT INTO access(service,client,client_type,auth_value,auth_reason,auth_version,indirect_object_identifier_type,flags,last_modified) \
+                VALUES('kTCCServiceScreenCapture','com.apple.screensharing.agent',0,2,4,1,0,0,${epoch}); \
+              COMMIT;"
+
+          brew install --cask ngrok
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'macos' }}
         uses: mxschmitt/action-tmate@7b6a61a73bbb9793cb80ad69b8dd8ac19261834c # v3.22
