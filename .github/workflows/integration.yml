@@ -64,6 +64,10 @@ jobs:
         if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
         timeout-minutes: 60
         run: ./integration_tests/linux-${{ matrix.secret-store }}/run.sh
+      - name: Wait 5m Before Killing Remote Debugging
+        if: ${{ always() && github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
+        run: |
+          sleep 5m
 
   macos:
     needs: check-permissions
@@ -133,6 +137,10 @@ jobs:
         with:
           name: macos-debug
           path: ./debug/
+      - name: Wait 5m Before Killing Remote Debugging
+        if: ${{ always() && github.event.inputs.remote-debug == 'macos' }}
+        run: |
+          sleep 5m
 
   windows:
     needs: check-permissions
@@ -162,3 +170,8 @@ jobs:
         if: ${{ github.event.inputs.remote-debug == '' || github.event.inputs.remote-debug == 'windows' }}
         timeout-minutes: 60
         run: ./integration_tests/windows/run.ps1
+      - name: Wait 5m Before Killing Remote Debugging
+        if: ${{ always() && github.event.inputs.remote-debug == 'windows' }}
+        shell: powershell
+        run: |
+          Start-Sleep -s 300
