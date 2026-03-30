@@ -22,7 +22,7 @@ jobs:
         with:
           egress-policy: audit
       - name: Create or Update Issue
-        uses: chrisgavin/create-or-update-issue-action@6c33f901f0e5b25f96409e670b49814902d35fa3 # 0.0.4
+        uses: chrisgavin/create-or-update-issue-action@3e480bdd473102c786d422df827fd491704a3244 # 0.0.5
         if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.run_attempt >= 5 }}
         with:
           title: Integration tests are currently failing.
