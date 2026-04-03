@@ -22,7 +22,7 @@ _INTEGRATION_TEST_TOTP_SEED = os.environ["SLACKTOKEN_INTEGRATION_TEST_TOTP_SEED"
 
 _CI = bool(os.environ.get("CI"))
 
-_MAGIC_LOGIN_LINK_MATCHER = re.compile("slack:\\\\/\\\\/T[A-Z0-9]+\\\\/magic-login\\\\/[0-9]+-[a-f0-9]+")
+_MAGIC_LOGIN_LINK_MATCHER = re.compile(r"slack:\\/\\/T[A-Z0-9]+\\/magic-login\\/[0-9]+-[a-f0-9]+")
 _RETRY_MESSAGES = {
 	"Wait a few minutes and try again.",
 }
@@ -87,7 +87,7 @@ def main():
 			match = _MAGIC_LOGIN_LINK_MATCHER.search(content)
 			if not match:
 				raise Exception("Failed to find magic login link in page content.")
-			magic_login_link = match.group(0).replace("\/", "/")
+			magic_login_link = match.group(0).replace(r"\/", "/")
 			if not arguments.debug_login:
 				subprocess.check_call([slack_binary, magic_login_link])
 			browser.close()
