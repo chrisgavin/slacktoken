@@ -57,8 +57,7 @@ jobs:
           key: playwright-linux
       - name: Setup
         run: |
-          task setup
-          poetry run playwright install
+          task setup setup-playwright
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
         uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101 # v3.23
@@ -102,8 +101,7 @@ jobs:
         env:
           SYSTEM_VERSION_COMPAT: "0" # Workaround for python-poetry/poetry#7161.
         run: |
-          task setup
-          poetry run playwright install
+          task setup setup-playwright
       - name: Enable Debug Settings
         if: ${{ github.event.inputs.remote-debug == 'macos' }}
         run: |
@@ -171,8 +169,7 @@ jobs:
           key: playwright-windows
       - name: Setup
         run: |
-          task setup
-          poetry run playwright install
+          task setup setup-playwright
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'windows' }}
         uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101 # v3.23
