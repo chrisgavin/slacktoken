@@ -74,7 +74,7 @@ jobs:
 
   macos:
     needs: check-permissions
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9ca718d3bf646d6534007c269a635b3e54cadf99 # v2.19.2
