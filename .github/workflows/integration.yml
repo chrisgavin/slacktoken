@@ -60,7 +60,7 @@ jobs:
           task setup setup-playwright
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == format('linux-{0}', matrix.secret-store) }}
-        uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101 # v3.23
+        uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113 # v3.24
         with:
           limit-access-to-actor: true
       - name: Run Test
@@ -123,7 +123,7 @@ jobs:
           brew install --cask ngrok
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'macos' }}
-        uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101 # v3.23
+        uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113 # v3.24
         with:
           limit-access-to-actor: true
       - name: Run Test
@@ -170,7 +170,7 @@ jobs:
           task setup setup-playwright
       - name: Remote Debugging
         if: ${{ github.event.inputs.remote-debug == 'windows' }}
-        uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101 # v3.23
+        uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113 # v3.24
         with:
           limit-access-to-actor: true
       - name: Run Test
