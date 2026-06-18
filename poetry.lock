@@ -1093,14 +1093,14 @@ dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "requests
 
 [[package]]
 name = "pytest-github-actions-annotate-failures"
-version = "0.4.0"
+version = "0.4.1"
 description = "pytest plugin to annotate failed tests with a workflow command for GitHub Actions"
 optional = true
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "pytest_github_actions_annotate_failures-0.4.0-py3-none-any.whl", hash = "sha256:285fed86e16b0b7a8eac6acdcde31913798fb739b15ef5b86895b4f5e32bf237"},
-    {file = "pytest_github_actions_annotate_failures-0.4.0.tar.gz", hash = "sha256:77d6baa29c8c61c2dacc494fa76eb95a185f0ee61666714ac43fb12ea672d217"},
+    {file = "pytest_github_actions_annotate_failures-0.4.1-py3-none-any.whl", hash = "sha256:d117bba2f975a357f4e395a71bf1638b4bcf5558fd7e8ee56d2480a521af8e03"},
+    {file = "pytest_github_actions_annotate_failures-0.4.1.tar.gz", hash = "sha256:cce5ed29b57e8f454fcc4414f8c9aaa9bf8e40848cfcb444b13d7204e9fc9dcb"},
 ]
 
 [package.dependencies]
