@@ -3,7 +3,6 @@ import argparse
 import datetime
 import logging
 import os
-import pathlib
 import re
 import subprocess
 import sys
@@ -32,13 +31,31 @@ def _parse_arguments():
 	parser.add_argument("--debug-login", action="store_true", help="Don't start Slack, just debug the login process.")
 	return parser.parse_args()
 
-def _slack_binary():
-	if sys.platform == "darwin":
-		return "/Applications/Slack.app/Contents/MacOS/Slack"
-	elif sys.platform == "win32":
-		return str(pathlib.Path(os.environ["PROGRAMFILES"]) / "Slack" / "Slack.exe")
+def _windows_slack_aumid():
+	aumid = subprocess.check_output(
+		["powershell", "-NoProfile", "-Command", "(Get-StartApps | Where-Object { $_.AppID -like '*slackdesktop*' } | Select-Object -First 1).AppID"],
+		text=True,
+	).strip()
+	if not aumid:
+		raise Exception("Failed to find the Slack MSIX package. Is Slack installed?")
+	return aumid
+
+def _start_slack():
+	if sys.platform == "win32":
+		return subprocess.Popen(["explorer.exe", f"shell:AppsFolder\\{_windows_slack_aumid()}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+	elif sys.platform == "darwin":
+		binary = "/Applications/Slack.app/Contents/MacOS/Slack"
 	else:
-		return "slack"
+		binary = "slack"
+	return subprocess.Popen([binary], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def _open_magic_login_link(magic_login_link):
+	if sys.platform == "win32":
+		os.startfile(magic_login_link)
+	elif sys.platform == "darwin":
+		subprocess.check_call(["/Applications/Slack.app/Contents/MacOS/Slack", magic_login_link])
+	else:
+		subprocess.check_call(["slack", magic_login_link])
 
 def main():
 	arguments = _parse_arguments()
@@ -50,8 +67,7 @@ def main():
 	totp = pyotp.TOTP(_INTEGRATION_TEST_TOTP_SEED)
 
 	if not arguments.debug_login:
-		slack_binary = _slack_binary()
-		slack_process = subprocess.Popen([slack_binary], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+		slack_process = _start_slack()
 	try:
 		with playwright.sync_api.sync_playwright() as playwright_sync:
 			browser = playwright_sync.chromium.launch(headless=False)
@@ -89,7 +105,7 @@ def main():
 				raise Exception("Failed to find magic login link in page content.")
 			magic_login_link = match.group(0).replace(r"\/", "/")
 			if not arguments.debug_login:
-				subprocess.check_call([slack_binary, magic_login_link])
+				_open_magic_login_link(magic_login_link)
 			browser.close()
 
 		if arguments.debug_login:
